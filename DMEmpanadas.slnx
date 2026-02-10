@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="DMEmpanadas.Data/DMEmpanadas.Data.csproj" />
+  <Project Path="DMEmpanadas.Test/DMEmpanadas.Test.csproj" />
+  <Project Path="DMEmpanadas.Web/DMEmpanadas.Web.csproj" />
+</Solution>
