@@ -3,13 +3,13 @@ name: .NET CI Pipeline
 on:
   pull_request:
     branches:
-      - develop
-      - qa
+      - Dev
+      - QA
       - master
   push:
     branches:
-      - develop
-      - qa
+      - Dev
+      - QA
       - master
 
 jobs:
