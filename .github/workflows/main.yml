@@ -1,0 +1,42 @@
+name: .NET CI Pipeline
+
+on:
+  pull_request:
+    branches:
+      - develop
+      - qa
+      - master
+  push:
+    branches:
+      - develop
+      - qa
+      - master
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Clonar repositorio
+      uses: actions/checkout@v3
+
+    - name: Instalar .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '9.0.x'
+
+    - name: Restaurar dependencias
+      run: dotnet restore
+
+    - name: Compilar proyecto
+      run: dotnet build --configuration Release --no-restore
+
+    - name: Ejecutar pruebas unitarias
+      run: dotnet test --configuration Release --logger trx --collect:"XPlat Code Coverage"
+
+    - name: Publicar resultados de pruebas
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results
+        path: '**/*.trx'
