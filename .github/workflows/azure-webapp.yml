@@ -1,0 +1,43 @@
+name: Build and deploy DMEmpanadas.Web to Azure Web App
+
+on:
+  push:
+    branches: [ master, main ]
+  workflow_dispatch:
+
+env:
+  # Azure App Service name (derived from your publish profile)
+  AZURE_WEBAPP_NAME: "dme-prod-dgaybpgwgwc0b9h5"
+
+jobs:
+  build-and-deploy:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Restore
+        run: dotnet restore ./DMEmpanadas.Web/DMEmpanadas.Web.csproj
+
+      - name: Build
+        run: dotnet build ./DMEmpanadas.Web/DMEmpanadas.Web.csproj --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test ./DMEmpanadas.Test/DMEmpanadas.Test.csproj --configuration Release --no-build --verbosity normal
+
+      - name: Publish
+        run: dotnet publish ./DMEmpanadas.Web/DMEmpanadas.Web.csproj --configuration Release --no-build -o ./publish
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          slot-name: "production"
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: "./publish"
